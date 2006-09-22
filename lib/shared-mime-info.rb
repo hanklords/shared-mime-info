@@ -171,7 +171,6 @@ module MIME
     #
     #  MIME.types['text/html'].match_filename? 'index.html'
     #   => true
-
     def match_filename?(filename)
       @glob_patterns.any? {|pattern| File.fnmatch pattern, filename}
     end
@@ -206,8 +205,10 @@ module MIME
   class << self
     attr_reader :mime_dirs # :nodoc:
 
-    # Array of all the known MIME::Types
-    attr_reader :types
+    # Returns the MIME::Type object corresponding to _type_.
+    def [](type)
+      @types.fetch type, nil
+    end
 
     # Look for the type of a file by doing successive checks on
     # the filename patterns.
