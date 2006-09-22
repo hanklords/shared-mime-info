@@ -22,14 +22,21 @@
 require 'enumerator'
 require 'rexml/document'
 
+# shared-mime-info is a pure Ruby library for accessing the MIME info
+# database provided by Freedesktop[http://freedesktop.org/] on
+# {Standards/shared-mime-info-spec}[http://wiki.freedesktop.org/wiki/Standards_2fshared_2dmime_2dinfo_2dspec].
+#
+# This provides a way to guess the mime type of a file by doing both
+# filename lookups and _magic_ file checks. This implementation tries to
+# follow the version 0.13 of the
+# specification[http://standards.freedesktop.org/shared-mime-info-spec/shared-mime-info-spec-0.13.html].
 module MIME
   VERSION = '0.1'
 
-  module Magic # :nodoc:
-    class BadMagic < StandardError # :nodoc:
-    end
+  module Magic # :nodoc: all
+    class BadMagic < StandardError; end
 
-    class RootEntry # :nodoc:
+    class RootEntry
       def initialize
         @sub_entries = []
         @indent = -1
@@ -55,7 +62,7 @@ module MIME
       end
     end
 
-    class Entry < RootEntry # :nodoc:
+    class Entry < RootEntry
       attr_reader :indent
       def initialize(indent, start_offset, value_length, value, mask, word_size, range_length)
         super()
@@ -114,14 +121,32 @@ module MIME
     end
   end
 
+  # Type represents a single mime type such as <b>text/html</b>.
   class Type
     attr_reader :magic_priority # :nodoc:
+
+    # Returns the type of a mime type as a String, such as <b>text/html</b>.
     attr_reader :type
 
+    # Returns the media part of the type of a mime type as a string,
+    # such as <b>text</b> for a type of <b>text/html</b>.
     def media; @type.split('/', 2).first; end
+
+    # Returns the subtype part of the type of a mime type as a string,
+    # such as <b>html</b> for a type of <b>text/html</b>.
     def subtype; @type.split('/', 2).last; end
+
+    # Synonym of type.
     def to_s; @type; end
 
+    # Returns a Hash of the comments associated with a mime type in
+    # different languages.
+    #
+    #  MIME.types['text/html'].default
+    #   => "HTML page"
+    #
+    #  MIME.types['text/html'].comment['fr']
+    #   => "page HTML"
     def comment
       file = ''
       MIME.mime_dirs.each { |dir|
@@ -141,10 +166,20 @@ module MIME
       comments
     end
 
+    # Check if _filename_ is of this particular type by comparing it to
+    # some common extensions.
+    #
+    #  MIME.types['text/html'].match_filename? 'index.html'
+    #   => true
+
     def match_filename?(filename)
-      @glob_patterns.find {|pattern| File.fnmatch pattern, filename}
+      @glob_patterns.any? {|pattern| File.fnmatch pattern, filename}
     end
 
+    # Check if _file_ is of this particular type by looking for precise
+    # patterns (_magic_ numbers) in different locations of the file.
+    #
+    # _file_ must be an IO object opened with read permissions.
     def match_file?(file)
       if @magic.nil?
         false
@@ -170,8 +205,14 @@ module MIME
 
   class << self
     attr_reader :mime_dirs # :nodoc:
+
+    # Array of all the known MIME::Types
     attr_reader :types
 
+    # Look for the type of a file by doing successive checks on
+    # the filename patterns.
+    #
+    # Returns a MIME::Type object or _nil_ if nothing matches.
     def check_globs(filename)
       enum = Enumerable::Enumerator.new(@globs, :each_key)
       found = enum.select { |pattern| File.fnmatch pattern, filename }
@@ -186,6 +227,10 @@ module MIME
       @globs[found.max]
     end
 
+    # Look for the type of a file by doing successive checks on
+    # _magic_ numbers.
+    #
+    # Returns a MIME::Type object or _nil_ if nothing matches.
     def check_magics(file)
       if file.respond_to? :read
         check_magics_with_priority(file, 0)
@@ -194,6 +239,12 @@ module MIME
       end
     end
 
+    # Look for the type of a file by doing successive checks with
+    # the filename patterns or magic numbers. If none of the matches
+    # are successful, returns a type of <b>application/octet-stream</b> if
+    # the file contains control characters at its beginning, or <b>text/plain</b> otherwise.
+    #
+    # Returns a MIME::Type object.
     def check(filename)
       check_special(filename) ||
       open(filename) { |f|
