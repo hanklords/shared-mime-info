@@ -69,8 +69,8 @@ module MIME
         @indent = indent
         @start_offset = start_offset
         @value_length = value_length
-        @value = value
-        @mask = mask
+        @value = value.freeze
+        @mask = mask.freeze
         @word_size = word_size
         @range_length = range_length
       end
@@ -154,16 +154,48 @@ module MIME
         break if File.file? file
       }
 
-      doc = REXML::Document.new open(file)
-      comments = {}
-      REXML::XPath.match(doc, '*/comment').each { |c|
-        if att = c.attributes['xml:lang']
-          comments[att] = c.text
-        else
-          comments.default = c.text
-        end
+      open(file) { |f|
+        doc = REXML::Document.new f
+        comments = {}
+        REXML::XPath.match(doc, '*/comment').each { |c|
+          if att = c.attributes['xml:lang']
+            comments[att] = c.text
+          else
+            comments.default = c.text
+          end
+        }
       }
       comments
+    end
+
+    # Returns all the types this type is a subclass of.
+    def parents
+      file = ''
+      MIME.mime_dirs.each { |dir|
+        file = "#{dir}/#{@type}.xml"
+        break if File.file? file
+      }
+
+      open(file) { |f|
+        doc = REXML::Document.new f
+        REXML::XPath.match(doc, '*/sub-class-of').collect { |c|
+          MIME[c.attributes['type']]
+        }
+      }
+    end
+
+    # Equality test.
+    #
+    #  MIME['text/html'] == 'text/html'
+    #   => true
+    def ==(type)
+      if type.is_a? Type
+        @type == type.type
+      elsif type.respond_to? :to_str
+        @type == type
+      else
+        false
+      end
     end
 
     # Check if _filename_ is of this particular type by comparing it to
@@ -188,7 +220,7 @@ module MIME
     end
 
     def initialize(type) # :nodoc:
-      @type = type
+      @type = type.freeze
       @glob_patterns = []
     end
 
@@ -198,7 +230,7 @@ module MIME
     end
 
     def add_glob(glob) # :nodoc:
-      @glob_patterns << glob
+      @glob_patterns << glob.freeze
     end
   end
 
