@@ -154,9 +154,9 @@ module MIME
         break if File.file? file
       }
 
+      comments = {}
       open(file) { |f|
         doc = REXML::Document.new f
-        comments = {}
         REXML::XPath.match(doc, '*/comment').each { |c|
           if att = c.attributes['xml:lang']
             comments[att] = c.text
