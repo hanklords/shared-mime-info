@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: MIME::Type</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">MIME::Type</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/shared-mime-info_rb.html">
+                lib/shared-mime-info.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+<a href="Type.html">Type</a> represents a single mime type such as
+<b>text/html</b>.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000010">==</a>&nbsp;&nbsp;
+      <a href="#M000008">comment</a>&nbsp;&nbsp;
+      <a href="#M000012">match_file?</a>&nbsp;&nbsp;
+      <a href="#M000011">match_filename?</a>&nbsp;&nbsp;
+      <a href="#M000005">media</a>&nbsp;&nbsp;
+      <a href="#M000009">parents</a>&nbsp;&nbsp;
+      <a href="#M000006">subtype</a>&nbsp;&nbsp;
+      <a href="#M000007">to_s</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+    <div id="attribute-list">
+      <h3 class="section-bar">Attributes</h3>
+
+      <div class="name-list">
+        <table>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">type</td>
+          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
+          <td class="context-item-desc">
+Returns the type of a mime type as a String, such as <b>text/html</b>.
+
+</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
+
+        <div class="method-heading">
+          <a href="#M000010" class="method-signature">
+          <span class="method-name">==</span><span class="method-args">(type)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Equality test.
+</p>
+<pre>
+ MIME['text/html'] == 'text/html'
+  =&gt; true
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000010-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000010-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 180</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">==</span>(<span class="ruby-identifier">type</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Type</span>
+        <span class="ruby-ivar">@type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">type</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:to_str</span>
+        <span class="ruby-ivar">@type</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">type</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+          <a href="#M000008" class="method-signature">
+          <span class="method-name">comment</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a Hash of the comments associated with a mime type in different
+languages.
+</p>
+<pre>
+ MIME.types['text/html'].default
+  =&gt; &quot;HTML page&quot;
+
+ MIME.types['text/html'].comment['fr']
+  =&gt; &quot;page HTML&quot;
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000008-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000008-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 139</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">comment</span>
+      <span class="ruby-identifier">file</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-constant">MIME</span>.<span class="ruby-identifier">mime_dirs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">file</span> = <span class="ruby-node">&quot;#{dir}/#{@type}.xml&quot;</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">file?</span> <span class="ruby-identifier">file</span>
+      }
+
+      <span class="ruby-identifier">comments</span> = {}
+      <span class="ruby-identifier">open</span>(<span class="ruby-identifier">file</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">doc</span> = <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Document</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">f</span>
+        <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">doc</span>, <span class="ruby-value str">'*/comment'</span>).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">att</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'xml:lang'</span>]
+            <span class="ruby-identifier">comments</span>[<span class="ruby-identifier">att</span>] = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">text</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">comments</span>.<span class="ruby-identifier">default</span> = <span class="ruby-identifier">c</span>.<span class="ruby-identifier">text</span>
+          <span class="ruby-keyword kw">end</span>
+        }
+      }
+      <span class="ruby-identifier">comments</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
+
+        <div class="method-heading">
+          <a href="#M000012" class="method-signature">
+          <span class="method-name">match_file?</span><span class="method-args">(file)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Check if <em>file</em> is of this particular type by looking for precise
+patterns (<em>magic</em> numbers) in different locations of the file.
+</p>
+<p>
+<em>file</em> must be an IO object opened with read permissions.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000012-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000012-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 203</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">match_file?</span>(<span class="ruby-identifier">file</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@magic</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@magic</span>.<span class="ruby-identifier">check_file</span> <span class="ruby-identifier">file</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000011" class="method-detail">
+        <a name="M000011"></a>
+
+        <div class="method-heading">
+          <a href="#M000011" class="method-signature">
+          <span class="method-name">match_filename?</span><span class="method-args">(filename)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Check if <em>filename</em> is of this particular type by comparing it to
+some common extensions.
+</p>
+<pre>
+ MIME.types['text/html'].match_filename? 'index.html'
+  =&gt; true
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000011-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000011-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 195</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">match_filename?</span>(<span class="ruby-identifier">filename</span>)
+      <span class="ruby-ivar">@glob_patterns</span>.<span class="ruby-identifier">any?</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">pattern</span><span class="ruby-operator">|</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">fnmatch</span> <span class="ruby-identifier">pattern</span>, <span class="ruby-identifier">filename</span>}
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="#M000005" class="method-signature">
+          <span class="method-name">media</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Type.html#M000005">media</a> part of the type of a
+mime type as a string, such as <b>text</b> for a type of <b>text/html</b>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000005-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 122</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">media</span>; <span class="ruby-ivar">@type</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'/'</span>, <span class="ruby-value">2</span>).<span class="ruby-identifier">first</span>; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+          <a href="#M000009" class="method-signature">
+          <span class="method-name">parents</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns all the types this type is a subclass of.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000009-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000009-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 161</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">parents</span>
+      <span class="ruby-identifier">file</span> = <span class="ruby-value str">''</span>
+      <span class="ruby-constant">MIME</span>.<span class="ruby-identifier">mime_dirs</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">file</span> = <span class="ruby-node">&quot;#{dir}/#{@type}.xml&quot;</span>
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">file?</span> <span class="ruby-identifier">file</span>
+      }
+
+      <span class="ruby-identifier">open</span>(<span class="ruby-identifier">file</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">doc</span> = <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Document</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">f</span>
+        <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">doc</span>, <span class="ruby-value str">'*/sub-class-of'</span>).<span class="ruby-identifier">collect</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>
+          <span class="ruby-constant">MIME</span>[<span class="ruby-identifier">c</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'type'</span>]]
+        }
+      }
+    <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="#M000006" class="method-signature">
+          <span class="method-name">subtype</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns the <a href="Type.html#M000006">subtype</a> part of the type of a
+mime type as a string, such as <b>html</b> for a type of <b>text/html</b>.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000006-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 126</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">subtype</span>; <span class="ruby-ivar">@type</span>.<span class="ruby-identifier">split</span>(<span class="ruby-value str">'/'</span>, <span class="ruby-value">2</span>).<span class="ruby-identifier">last</span>; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="#M000007" class="method-signature">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Synonym of type.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000007-source">
+<pre>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 129</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">to_s</span>; <span class="ruby-ivar">@type</span>; <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
