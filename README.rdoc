@@ -4,6 +4,6 @@ shared-mime-info is a pure Ruby library for accessing the MIME info database pro
 
 = Project
 
-The rubyforge project : http://rubyforge.org/projects/shared-mime/
+The rubyforge project : http://rubyforge.org/projects/shared-mime
 
 The github repository: http://github.com/hanklords/shared-mime-info/tree/master
