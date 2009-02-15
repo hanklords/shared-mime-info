@@ -1,0 +1,9 @@
+= shared-mime-info
+
+shared-mime-info is a pure Ruby library for accessing the MIME info database provided by Freedesktop[http://freedesktop.org/] on {Standards/shared-mime-info-spec}[http://freedesktop.org/wiki/Specifications/shared-mime-info-spec].
+
+= Project
+
+The rubyforge project : http://rubyforge.org/projects/shared-mime/
+
+The github repository: http://github.com/hanklords/shared-mime-info/tree/master

@@ -4,7 +4,7 @@ require 'rake/gempackagetask'
 
 require 'lib/shared-mime-info'
 
-PKG_FILES = FileList["lib/*.rb", "Rakefile", "LICENSE"].to_a
+PKG_FILES = FileList["lib/*.rb", "Rakefile", "LICENSE", "README.rdoc"].to_a
 
 spec = Gem::Specification.new do |s|
   s.summary = "Library to guess the MIME type of a file with both filename lookup and magic file detection"
@@ -18,9 +18,8 @@ spec = Gem::Specification.new do |s|
 end
 
 Rake::RDocTask.new do |rd|
-  rd.rdoc_files.include "lib/*.rb"
+  rd.rdoc_files.include "README.rdoc", "lib/*.rb"
   rd.options << "--inline-source"
-  rd.main = "MIME"
 end
 
 Rake::GemPackageTask.new spec do |p|

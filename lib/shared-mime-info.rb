@@ -15,10 +15,6 @@
 require 'enumerator'
 require 'rexml/document'
 
-# shared-mime-info is a pure Ruby library for accessing the MIME info
-# database provided by Freedesktop[http://freedesktop.org/] on
-# {Standards/shared-mime-info-spec}[http://freedesktop.org/wiki/Specifications/shared-mime-info-spec].
-#
 # This provides a way to guess the mime type of a file by doing both
 # filename lookups and _magic_ file checks. This implementation tries to
 # follow the version 0.13 of the
