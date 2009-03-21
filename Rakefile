@@ -26,6 +26,7 @@ Rake::GemPackageTask.new spec do |p|
   p.need_tar_gz = true
 end
 
+desc 'Generate the gemspec'
 task :spec do
   open("#{spec.name}.gemspec", "w") {|g| g.puts spec.to_ruby }
 end

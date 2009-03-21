@@ -7,3 +7,13 @@ shared-mime-info is a pure Ruby library for accessing the MIME info database pro
 The rubyforge project : http://rubyforge.org/projects/shared-mime
 
 The github repository: http://github.com/hanklords/shared-mime-info/tree/master
+
+
+= Usage
+
+ require 'shared-mime-info'
+
+ MIME.check 'sample.jpg'  # => #<MIME::Type  ...,  @type="image/jpeg">
+
+ MIME['image/jpeg'].match_filename? 'sample.jpg' # => true
+

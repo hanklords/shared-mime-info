@@ -131,10 +131,10 @@ module MIME
     # Returns a Hash of the comments associated with a mime type in
     # different languages.
     #
-    #  MIME.types['text/html'].default
+    #  MIME['text/html'].comment.default
     #   => "HTML page"
     #
-    #  MIME.types['text/html'].comment['fr']
+    #  MIME['text/html'].comment['fr']
     #   => "page HTML"
     def comment
       file = ''
@@ -190,7 +190,7 @@ module MIME
     # Check if _filename_ is of this particular type by comparing it to
     # some common extensions.
     #
-    #  MIME.types['text/html'].match_filename? 'index.html'
+    #  MIME['text/html'].match_filename? 'index.html'
     #   => true
     def match_filename?(filename)
       basename = File.basename(filename)
