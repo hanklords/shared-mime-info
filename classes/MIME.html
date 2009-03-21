@@ -151,7 +151,7 @@ Returns the <a href="MIME/Type.html">MIME::Type</a> object corresponding to
             onclick="toggleCode('M000001-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000001-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 230</span>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 231</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">type</span>)
       <span class="ruby-ivar">@types</span>.<span class="ruby-identifier">fetch</span> <span class="ruby-identifier">type</span>, <span class="ruby-keyword kw">nil</span>
     <span class="ruby-keyword kw">end</span>
@@ -183,7 +183,7 @@ Returns a <a href="MIME/Type.html">MIME::Type</a> object.
             onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000004-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 270</span>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 272</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check</span>(<span class="ruby-identifier">filename</span>)
       <span class="ruby-identifier">check_special</span>(<span class="ruby-identifier">filename</span>) <span class="ruby-operator">||</span>
       <span class="ruby-identifier">open</span>(<span class="ruby-identifier">filename</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
@@ -220,15 +220,16 @@ nothing matches.
             onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000002-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 238</span>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 239</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_globs</span>(<span class="ruby-identifier">filename</span>)
+      <span class="ruby-identifier">basename</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">basename</span>(<span class="ruby-identifier">filename</span>)
       <span class="ruby-identifier">enum</span> = <span class="ruby-constant">Enumerable</span><span class="ruby-operator">::</span><span class="ruby-constant">Enumerator</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@globs</span>, <span class="ruby-identifier">:each_key</span>)
-      <span class="ruby-identifier">found</span> = <span class="ruby-identifier">enum</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">pattern</span><span class="ruby-operator">|</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">fnmatch</span> <span class="ruby-identifier">pattern</span>, <span class="ruby-identifier">filename</span> }
+      <span class="ruby-identifier">found</span> = <span class="ruby-identifier">enum</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">pattern</span><span class="ruby-operator">|</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">fnmatch</span> <span class="ruby-identifier">pattern</span>, <span class="ruby-identifier">basename</span> }
 
       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">found</span>.<span class="ruby-identifier">empty?</span>
-        <span class="ruby-identifier">downcase_filename</span> = <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">downcase</span>
+        <span class="ruby-identifier">downcase_basename</span> = <span class="ruby-identifier">basename</span>.<span class="ruby-identifier">downcase</span>
         <span class="ruby-identifier">found</span> = <span class="ruby-identifier">enum</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">pattern</span><span class="ruby-operator">|</span>
-          <span class="ruby-constant">File</span>.<span class="ruby-identifier">fnmatch</span> <span class="ruby-identifier">pattern</span>, <span class="ruby-identifier">downcase_filename</span>
+          <span class="ruby-constant">File</span>.<span class="ruby-identifier">fnmatch</span> <span class="ruby-identifier">pattern</span>, <span class="ruby-identifier">downcase_basename</span>
         }
       <span class="ruby-keyword kw">end</span>
 
@@ -261,7 +262,7 @@ nothing matches.
             onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
           <div class="method-source-code" id="M000003-source">
 <pre>
-<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 256</span>
+<span class="ruby-comment cmt"># File lib/shared-mime-info.rb, line 258</span>
     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">check_magics</span>(<span class="ruby-identifier">file</span>)
       <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">file</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-identifier">:read</span>
         <span class="ruby-identifier">check_magics_with_priority</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value">0</span>)

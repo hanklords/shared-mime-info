@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Sun Feb 15 01:35:53 +0100 2009</td>
+      <td>Sat Mar 21 14:29:22 +0100 2009</td>
     </tr>
     </table>
   </div>
@@ -85,6 +85,14 @@ href="http://rubyforge.org/projects/shared-mime">rubyforge.org/projects/shared-m
 The github repository: <a
 href="http://github.com/hanklords/shared-mime-info/tree/master">github.com/hanklords/shared-mime-info/tree/master</a>
 </p>
+<h1>Usage</h1>
+<pre>
+ require 'shared-mime-info'
+
+ MIME.check 'sample.jpg'  # =&gt; #&lt;MIME::Type  ...,  @type=&quot;image/jpeg&quot;&gt;
+
+ MIME['image/jpeg'].match_filename? 'sample.jpg' # =&gt; true
+</pre>
 
     </div>
 
