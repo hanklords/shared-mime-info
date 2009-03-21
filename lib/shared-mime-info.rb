@@ -193,7 +193,8 @@ module MIME
     #  MIME.types['text/html'].match_filename? 'index.html'
     #   => true
     def match_filename?(filename)
-      @glob_patterns.any? {|pattern| File.fnmatch pattern, filename}
+      basename = File.basename(filename)
+      @glob_patterns.any? {|pattern| File.fnmatch pattern, basename}
     end
 
     # Check if _file_ is of this particular type by looking for precise
@@ -236,13 +237,14 @@ module MIME
     #
     # Returns a MIME::Type object or _nil_ if nothing matches.
     def check_globs(filename)
+      basename = File.basename(filename)
       enum = Enumerable::Enumerator.new(@globs, :each_key)
-      found = enum.select { |pattern| File.fnmatch pattern, filename }
+      found = enum.select { |pattern| File.fnmatch pattern, basename }
 
       if found.empty?
-        downcase_filename = filename.downcase
+        downcase_basename = basename.downcase
         found = enum.select { |pattern|
-          File.fnmatch pattern, downcase_filename
+          File.fnmatch pattern, downcase_basename
         }
       end
 
