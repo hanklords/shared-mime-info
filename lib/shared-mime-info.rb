@@ -61,7 +61,7 @@ module MIME
         @value = value.freeze
         @mask = mask.freeze
         @word_size = word_size
-        @range_length = range_length
+        @range_length = (range_length || 1).to_i
       end
 
       def check_file(f)
@@ -71,7 +71,16 @@ module MIME
       private
       def check_entry(f)
         f.pos = @start_offset
-        f.read(@value_length) == @value
+        m = (@mask || [0xff].pack('c') * @value_length ).unpack('c*')
+        v = @value.unpack('c*')
+        r = (f.read(@value_length + @range_length -1)|| '').unpack('c*')
+        range_length = 0
+        found = false
+        while not found and range_length < r.size
+          found = v.zip(m, r[range_length, @value_length]).all? {|vb, mb, rb| (rb & mb) == (vb & mb) }
+          range_length = range_length + 1
+        end
+        found
       end
     end
 
