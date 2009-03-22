@@ -12,8 +12,10 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-require 'enumerator'
+$: << File.dirname(__FILE__)
+
 require 'rexml/document'
+require 'magics'
 
 # This provides a way to guess the mime type of a file by doing both
 # filename lookups and _magic_ file checks. This implementation tries to
@@ -25,18 +27,24 @@ module MIME
   module Magic # :nodoc: all
     class BadMagic < StandardError; end
 
-    class RootEntry
-      def initialize
+    class Entry
+      attr_reader :indent
+      def initialize(indent, start_offset, value_length, value, mask, word_size, range_length)
+        @indent = indent
+        @start_offset = start_offset
+        @value_length = value_length
+        @value = value.freeze
+        @mask = mask.freeze
+        @word_size = word_size
+        @range_length = range_length
         @sub_entries = []
-        @indent = -1
       end
 
       def add_subentry(entry)
-        return unless entry.indent > @indent
         if entry.indent == @indent + 1
           @sub_entries << entry
         elsif entry.indent > @indent + 1
-          if @sub_entries.last.respond_to? :add_subentry
+          if not @sub_entries.empty?
             @sub_entries.last.add_subentry entry
           else
             raise BadMagic
@@ -46,30 +54,12 @@ module MIME
         end
       end
 
-      def check_file(f)
-        @sub_entries.empty? || @sub_entries.any? {|e| e.check_file f}
-      end
-    end
-
-    class Entry < RootEntry
-      attr_reader :indent
-      def initialize(indent, start_offset, value_length, value, mask, word_size, range_length)
-        super()
-        @indent = indent
-        @start_offset = start_offset
-        @value_length = value_length
-        @value = value.freeze
-        @mask = mask.freeze
-        @word_size = word_size
-        @range_length = (range_length || 1).to_i
-      end
-
-      def check_file(f)
-        check_entry(f) && super(f)
+      def =~(f)
+        check_file(f) and (@sub_entries.empty? || @sub_entries.any? {|e| e =~ f})
       end
 
       private
-      def check_entry(f)
+      def check_file(f)
         f.pos = @start_offset
         m = (@mask || [0xff].pack('c') * @value_length ).unpack('c*')
         v = @value.unpack('c*')
@@ -84,47 +74,26 @@ module MIME
       end
     end
 
-    def self.parse(magic)
-      parsed = RootEntry.new
-      entry = magic
-
-      until entry.empty?
-        entry = entry.sub /^(\d?)>(\d+)=/, ''
-        indent = $1.to_i
-        start_offset = $2.to_i
-        value_length = entry.unpack('n').first
-        value, entry = entry.unpack("x2a#{value_length}a*")
-
-        if entry[/./m] == '&'
-          mask, entry = entry.unpack("xa#{value_length}a*")
-        end
-
-        if entry[/./m] == '~'
-          entry =~ /^~(\d+)(.*)/m
-          word_size = $1
-          entry = $2
-        end
-
-        if entry[/./m] == '+'
-          entry =~ /^\+(\d+)(.*)/m
-          range_length = $1
-          entry = $2
-        end
-        entry = entry.sub /^[^\n]*\n/m, ''
-
-        parsed.add_subentry Entry.new(indent, start_offset, value_length, value, mask, word_size, range_length)
+    class RootEntry < Entry
+      attr_reader :priority, :type
+      def initialize(type, priority)
+        @indent = -1
+        @type = type
+        @priority = priority
+        @sub_entries = []
       end
 
-      parsed
+      private
+      def check_file(*args) true end
     end
   end
 
   # Type represents a single mime type such as <b>text/html</b>.
   class Type
-    attr_reader :magic_priority # :nodoc:
-
     # Returns the type of a mime type as a String, such as <b>text/html</b>.
     attr_reader :type
+
+    attr_reader :magics, :glob_patterns
 
     # Returns the media part of the type of a mime type as a string,
     # such as <b>text</b> for a type of <b>text/html</b>.
@@ -210,26 +179,14 @@ module MIME
     # patterns (_magic_ numbers) in different locations of the file.
     #
     # _file_ must be an IO object opened with read permissions.
-    def match_file?(file)
-      if @magic.nil?
-        false
-      else
-        @magic.check_file file
-      end
+    def match_file?(f)
+      @magics.any? {|m| m =~ f }
     end
 
     def initialize(type) # :nodoc:
-      @type = type.freeze
+      @type = type
       @glob_patterns = []
-    end
-
-    def load_magic(magic, priority) # :nodoc:
-      @magic_priority = priority
-      @magic = Magic.parse magic
-    end
-
-    def add_glob(glob) # :nodoc:
-      @glob_patterns << glob.freeze
+      @magics = []
     end
   end
 
@@ -266,9 +223,9 @@ module MIME
     # Returns a MIME::Type object or _nil_ if nothing matches.
     def check_magics(file)
       if file.respond_to? :read
-        check_magics_with_priority(file, 0)
+        check_magics_type(file, @magics)
       else
-        open(file) {|f| check_magics_with_priority(f, 0) }
+        open(file) {|f| check_magics_type(f, @magics) }
       end
     end
 
@@ -281,20 +238,17 @@ module MIME
     def check(filename)
       check_special(filename) ||
       open(filename) { |f|
-        check_magics_with_priority(f, 80) ||
+        check_magics_gt80(f) ||
         check_globs(filename) ||
-        check_magics_with_priority(f, 0) ||
+        check_magics_lt80(f) ||
         check_default(f)
       }
     end
 
     private
-    def check_magics_with_priority(f, priority_threshold)
-      @magics.find { |t|
-        break if t.magic_priority < priority_threshold
-        t.match_file? f
-      }
-    end
+    def check_magics_type(f, set); c = set.find {|m| m =~ f} and MIME[c.type] end
+    def check_magics_gt80(f); check_magics_type(f, @magics_gt80) end
+    def check_magics_lt80(f); check_magics_type(f, @magics_lt80) end
 
     def check_special(filename)
       case File.ftype(filename)
@@ -325,34 +279,14 @@ module MIME
           next if line =~ /^#/
           cline = line.chomp
           type, pattern = cline.split ':', 2
-          @types[type].add_glob pattern
+          @types[type].glob_patterns << pattern
           @globs[pattern] = @types[type] unless @globs.has_key? pattern
         }
       }
     end
 
     def load_magic(file)
-       open(file) { |f|
-        raise 'Bad magic file' if f.readline != "MIME-Magic\0\n"
-
-        f.gets =~ /^\[(\d\d):(.+)\]/
-        priority = $1.to_i
-        type = $2
-        buf =''
-
-        f.each { |line|
-          if line =~ /^\[(\d\d):(.+)\]/
-            @types[type].load_magic buf, priority
-            @magics << @types[type]
-
-            priority = $1.to_i
-            type = $2
-            buf = ''
-          else
-            buf << line
-          end
-        }
-      }
+      @magics.concat Magic.parse_magic(File.read(file))
     end
   end
 
@@ -374,4 +308,8 @@ module MIME
     magic_file =  "#{dir}/magic"
     load_magic magic_file if File.file? magic_file
   }
+
+  @magics.sort! {|a,b| b.priority <=> a.priority}
+  @magics.each {|m| @types[m.type].magics << m}
+  @magics_gt80, @magics_lt80 = @magics.partition {|m| m.priority >= 80}
 end
