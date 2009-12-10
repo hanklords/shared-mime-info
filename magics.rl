@@ -5,7 +5,7 @@ module Magic
 
   action begin {b = p}
   action end   {e = data[ b .. p]}
-  action number {n = e.to_i}
+  action number {n = e.pack("c*").to_i}
   number = digit+ >begin @end %number;
 
   # media-type
@@ -15,7 +15,7 @@ module Magic
 
   # Section
   action value {
-    value_length = data[p+1, 2].unpack('n').first
+    value_length = data[p+1, 2].pack("c*").unpack('n').first
     p +=2
     value = data[p+1, value_length]
     mask = [0xff].pack('c') * value_length
@@ -54,6 +54,7 @@ module Magic
 
 def self.parse_magic( data )
   magics = []
+  data = data.unpack("c*") if data.is_a?(String)
 
   %% write init;
   eof = pe

@@ -1,8 +1,9 @@
+
 # line 1 "magics.rl"
 module MIME
 module Magic
 
-# line 6 "lib/magics.rb"
+# line 7 "lib/magics.rb"
 class << self
 	attr_accessor :_magic_actions
 	private :_magic_actions, :_magic_actions=
@@ -144,23 +145,26 @@ class << self
 end
 self.magic_en_main = 1;
 
+
 # line 53 "magics.rl"
 
 
 def self.parse_magic( data )
   magics = []
+  data = data.unpack("c*") if data.is_a?(String)
 
   
-# line 155 "lib/magics.rb"
+# line 158 "lib/magics.rb"
 begin
 	p ||= 0
 	pe ||= data.length
 	cs = magic_start
 end
-# line 59 "magics.rl"
+
+# line 60 "magics.rl"
   eof = pe
   
-# line 164 "lib/magics.rb"
+# line 168 "lib/magics.rb"
 begin
 	_klen, _trans, _keys, _acts, _nacts = nil
 	_goto_level = 0
@@ -254,7 +258,7 @@ e = data[ b .. p]		end
 when 2 then
 # line 8 "magics.rl"
 		begin
-n = e.to_i		end
+n = e.pack("c*").to_i		end
 # line 8 "magics.rl"
 when 3 then
 # line 12 "magics.rl"
@@ -265,7 +269,7 @@ when 4 then
 # line 17 "magics.rl"
 		begin
 
-    value_length = data[p+1, 2].unpack('n').first
+    value_length = data[p+1, 2].pack("c*").unpack('n').first
     p +=2
     value = data[p+1, value_length]
     mask = [0xff].pack('c') * value_length
@@ -322,7 +326,7 @@ when 13 then
     magics.last.add_subentry Entry.new(indent, start_offset, value_length, value, mask, word_size, range_length)
   		end
 # line 35 "magics.rl"
-# line 326 "lib/magics.rb"
+# line 330 "lib/magics.rb"
 			end # action switch
 		end
 	end
@@ -348,7 +352,8 @@ when 13 then
 	end
 	end
 	end
-# line 61 "magics.rl"
+
+# line 62 "magics.rl"
   if  cs < magic_first_final
     raise BadMagic
   end

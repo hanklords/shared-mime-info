@@ -61,8 +61,9 @@ module MIME
       private
       def check_file(f)
         f.pos = @start_offset
-        m = (@mask || [0xff].pack('c') * @value_length ).unpack('c*')
-        v = @value.unpack('c*')
+        m = (@mask || [0xff].pack('c') * @value_length )
+	m = m.is_a?(String) ? m.unpack('c*') : m
+        v = @value.is_a?(String) ? @value.unpack('c*') : @value
         r = (f.read(@value_length + @range_length -1)|| '').unpack('c*')
         range_length = 0
         found = false
@@ -104,7 +105,11 @@ module MIME
     def subtype; @type.split('/', 2).last; end
 
     # Synonym of type.
-    def to_s; @type; end
+    def to_s; self.type; end
+
+def type
+@type.is_a?(String) ? @type : @type.pack("c*")
+end
 
     # Returns a Hash of the comments associated with a mime type in
     # different languages.
