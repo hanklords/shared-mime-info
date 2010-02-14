@@ -201,12 +201,11 @@ module MIME
     # Returns a MIME::Type object or _nil_ if nothing matches.
     def check_globs(filename)
       basename = File.basename(filename)
-      enum = Enumerable::Enumerator.new(@globs, :each_key)
-      found = enum.select { |pattern| File.fnmatch pattern, basename }
+      found = @globs.each_key.select { |pattern| File.fnmatch pattern, basename }
 
       if found.empty?
         downcase_basename = basename.downcase
-        found = enum.select { |pattern|
+        found = @globs.each_key.select { |pattern|
           File.fnmatch pattern, downcase_basename
         }
       end
