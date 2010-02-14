@@ -10,8 +10,6 @@ spec = Gem::Specification.new do |s|
   s.author = "Mael Clerambault"
   s.email =  "mael@clerambault.fr"
   s.version = '0.1'
-  s.has_rdoc = true
-  s.require_path = 'lib'
   s.files = PKG_FILES.to_a
 end
 
@@ -20,9 +18,7 @@ Rake::RDocTask.new do |rd|
   rd.options << "--inline-source"
 end
 
-Rake::GemPackageTask.new spec do |p|
-  p.need_tar_gz = true
-end
+Rake::GemPackageTask.new(spec).define
 
 desc 'Generate the magics parser'
 file "lib/magics.rb" => "magics.rl" do |t|
