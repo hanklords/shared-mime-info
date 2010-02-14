@@ -12,7 +12,6 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-$: << File.dirname(__FILE__)
 
 require 'rexml/document'
 require 'magics'
@@ -61,14 +60,11 @@ module MIME
       private
       def check_file(f)
         f.pos = @start_offset
-        m = (@mask || [0xff].pack('c') * @value_length )
-	m = m.is_a?(String) ? m.unpack('c*') : m
-        v = @value.is_a?(String) ? @value.unpack('c*') : @value
-        r = (f.read(@value_length + @range_length -1)|| '').unpack('c*')
+        r = (f.read(@value_length + @range_length -1)|| '').unpack("c*")
         range_length = 0
         found = false
         while not found and range_length < r.size
-          found = v.zip(m, r[range_length, @value_length]).all? {|vb, mb, rb| (rb & mb) == (vb & mb) }
+          found = @value.zip(@mask, r[range_length, @value_length]).all? {|vb, mb, rb| (rb & mb) == (vb & mb) }
           range_length = range_length + 1
         end
         found
@@ -105,11 +101,7 @@ module MIME
     def subtype; @type.split('/', 2).last; end
 
     # Synonym of type.
-    def to_s; self.type; end
-
-def type
-@type.is_a?(String) ? @type : @type.pack("c*")
-end
+    def to_s; @type end
 
     # Returns a Hash of the comments associated with a mime type in
     # different languages.

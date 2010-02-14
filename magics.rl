@@ -9,7 +9,7 @@ module Magic
   number = digit+ >begin @end %number;
 
   # media-type
-  action type {type = e}
+  action type {type = e.pack("c*")}
   type_part = alnum | [\-_+.] ;
   type = (type_part+ "/" type_part+) >begin @end %type;
 
@@ -18,7 +18,7 @@ module Magic
     value_length = data[p+1, 2].pack("c*").unpack('n').first
     p +=2
     value = data[p+1, value_length]
-    mask = [0xff].pack('c') * value_length
+    mask = [0xff] * value_length
     p += value_length 
   }
   action mask {
@@ -54,7 +54,7 @@ module Magic
 
 def self.parse_magic( data )
   magics = []
-  data = data.unpack("c*") if data.is_a?(String)
+  data = data.unpack("c*")
 
   %% write init;
   eof = pe

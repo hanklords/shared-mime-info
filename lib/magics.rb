@@ -151,7 +151,7 @@ self.magic_en_main = 1;
 
 def self.parse_magic( data )
   magics = []
-  data = data.unpack("c*") if data.is_a?(String)
+  data = data.unpack("c*")
 
   
 # line 158 "lib/magics.rb"
@@ -263,7 +263,7 @@ n = e.pack("c*").to_i		end
 when 3 then
 # line 12 "magics.rl"
 		begin
-type = e		end
+type = e.pack("c*")		end
 # line 12 "magics.rl"
 when 4 then
 # line 17 "magics.rl"
@@ -272,7 +272,7 @@ when 4 then
     value_length = data[p+1, 2].pack("c*").unpack('n').first
     p +=2
     value = data[p+1, value_length]
-    mask = [0xff].pack('c') * value_length
+    mask = [0xff] * value_length
     p += value_length 
   		end
 # line 17 "magics.rl"
